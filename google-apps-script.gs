@@ -69,7 +69,7 @@ function doPost(e) {
     sheet.appendRow(HEADERS.map(function (h) {
       var v = data[h];
       if (v === undefined || v === null) return '';
-      return Array.isArray(v) ? v.join(', ') : String(v);
+      return sanitize_(Array.isArray(v) ? v.join(', ') : String(v));
     }));
     return json_({ result: 'ok' });
   } catch (err) {
@@ -97,6 +97,15 @@ function ensureHeaders_(sheet) {
     sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
     sheet.setFrozenRows(1);
   }
+}
+
+/**
+ * Values are user-supplied text. A string starting with = + - or @ would be
+ * stored by Sheets as a live formula (formula/CSV injection), so prefix it
+ * with an apostrophe to force plain text.
+ */
+function sanitize_(v) {
+  return /^[=+\-@]/.test(v) ? "'" + v : v;
 }
 
 function json_(obj) {
