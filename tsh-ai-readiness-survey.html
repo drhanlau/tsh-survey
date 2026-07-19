@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Training Survey — TSH Resources</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182A32;
+    --ink-soft:#4A5D64;
+    --paper:#F6F7F4;
+    --card:#FFFFFF;
+    --line:#DEE4DD;
+    --teal:#1F6F63;
+    --teal-deep:#154F47;
+    --amber:#D89A3A;
+    --amber-soft:#F3E1BD;
+    --danger:#B4553F;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(31,111,99,0.05), transparent 45%),
+      radial-gradient(circle at 90% 10%, rgba(216,154,58,0.06), transparent 40%);
+    color:var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+    padding:32px 16px 80px;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+
+  /* progress meter — graduated cylinder motif */
+  .meter{position:sticky;top:0;z-index:20;background:var(--paper);padding:14px 0 10px;margin-bottom:8px;}
+  .meter-track{
+    position:relative;height:10px;background:var(--card);
+    border:1px solid var(--line);border-radius:6px;overflow:hidden;
+  }
+  .meter-fill{
+    position:absolute;left:0;top:0;bottom:0;width:0%;
+    background:linear-gradient(90deg, var(--teal), var(--amber));
+    transition:width .4s ease;
+  }
+  .meter-ticks{display:flex;justify-content:space-between;margin-top:5px;}
+  .meter-ticks span{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);
+    letter-spacing:.02em;
+  }
+
+  header.hero{padding:18px 4px 26px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--teal-deep);font-weight:600;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:1.1;
+    margin:10px 0 8px;font-weight:700;color:var(--ink);
+  }
+  .sub{color:var(--ink-soft);font-size:15px;max-width:52ch;}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 24px;margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(24,42,50,0.03);
+  }
+  .section-label{
+    display:flex;align-items:baseline;gap:10px;margin-bottom:18px;
+  }
+  .section-label .num{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--teal);
+    background:rgba(31,111,99,0.08);border-radius:20px;padding:3px 10px;font-weight:600;
+  }
+  .section-label .title{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+    letter-spacing:.01em;color:var(--ink);
+  }
+
+  .q{margin-bottom:22px;}
+  .q:last-child{margin-bottom:0;}
+  .q-text{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--ink);}
+  .q-hint{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+
+  label.field{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;}
+  input[type=text], textarea, select{
+    width:100%;font-family:'Inter',sans-serif;font-size:14.5px;color:var(--ink);
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;outline:none;transition:border-color .15s;
+  }
+  input[type=text]:focus, textarea:focus, select:focus{border-color:var(--teal);}
+  textarea{resize:vertical;min-height:76px;font-family:'Inter',sans-serif;}
+
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .opt{
+    display:flex;align-items:flex-start;gap:10px;padding:10px 12px;
+    border:1px solid var(--line);border-radius:10px;cursor:pointer;
+    background:var(--paper);transition:border-color .15s, background .15s;
+    font-size:14px;
+  }
+  .opt:hover{border-color:var(--teal);}
+  .opt.checked{border-color:var(--teal);background:rgba(31,111,99,0.06);}
+  .opt input{margin-top:2px;accent-color:var(--teal);width:16px;height:16px;flex-shrink:0;}
+  .opt .other-input{
+    margin-top:6px;width:100%;font-size:13.5px;padding:7px 10px;display:none;
+  }
+  .opt.other-checked .other-input{display:block;}
+
+  .scale{display:flex;gap:8px;}
+  .scale-item{flex:1;text-align:center;}
+  .scale-item input{display:none;}
+  .scale-item .box{
+    border:1px solid var(--line);border-radius:10px;padding:12px 4px;cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;color:var(--ink-soft);
+    background:var(--paper);transition:all .15s;
+  }
+  .scale-item input:checked + .box{
+    border-color:var(--teal);background:var(--teal);color:#fff;
+  }
+  .scale-caps{display:flex;justify-content:space-between;margin-top:6px;font-size:10.5px;color:var(--ink-soft);}
+
+  .required-mark{color:var(--amber);margin-left:2px;}
+  .missing{border-color:var(--danger) !important;}
+  .error-text{color:var(--danger);font-size:12px;margin-top:6px;display:none;}
+  .error-text.show{display:block;}
+
+  button.submit{
+    width:100%;background:var(--teal-deep);color:#fff;border:none;border-radius:12px;
+    padding:16px;font-family:'Space Grotesk',sans-serif;font-size:15.5px;font-weight:600;
+    cursor:pointer;transition:background .15s;letter-spacing:.01em;
+  }
+  button.submit:hover{background:var(--teal);}
+  button.submit:active{transform:translateY(1px);}
+  button.submit:disabled{opacity:.6;cursor:default;}
+
+  .footer-note{
+    text-align:center;font-size:12px;color:var(--ink-soft);margin-top:18px;
+  }
+  .admin-link{
+    background:none;border:none;color:var(--ink-soft);font-size:11.5px;
+    text-decoration:underline;cursor:pointer;font-family:'IBM Plex Mono',monospace;
+    margin-top:4px;
+  }
+
+  /* thank-you state */
+  .done{display:none;text-align:center;padding:60px 20px;}
+  .done.show{display:block;}
+  .done .mark{
+    width:56px;height:56px;border-radius:50%;background:var(--teal);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    margin:0 auto 20px;
+  }
+  .done h2{font-family:'Space Grotesk',sans-serif;font-size:24px;margin-bottom:8px;}
+  .done p{color:var(--ink-soft);font-size:14.5px;max-width:40ch;margin:0 auto;}
+
+  /* admin overlay */
+  .overlay{
+    display:none;position:fixed;inset:0;background:rgba(24,42,50,0.55);
+    z-index:100;align-items:flex-start;justify-content:center;padding:40px 16px;
+    overflow-y:auto;
+  }
+  .overlay.show{display:flex;}
+  .admin-panel{
+    background:#fff;border-radius:var(--radius);max-width:820px;width:100%;
+    padding:28px;max-height:85vh;overflow-y:auto;
+  }
+  .admin-panel h3{font-family:'Space Grotesk',sans-serif;margin:0 0 4px;}
+  .admin-panel .count{color:var(--ink-soft);font-size:13px;margin-bottom:16px;}
+  .admin-actions{display:flex;gap:10px;margin-bottom:18px;}
+  .admin-actions button{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;border:1px solid var(--line);
+    background:var(--paper);border-radius:8px;padding:8px 14px;cursor:pointer;
+  }
+  .admin-actions button:hover{border-color:var(--teal);}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top;}
+  th{background:var(--paper);font-family:'IBM Plex Mono',monospace;font-weight:600;}
+  .empty-state{color:var(--ink-soft);font-size:13px;padding:20px 0;text-align:center;}
+
+  @media (max-width:480px){
+    h1{font-size:28px;}
+    .card{padding:20px 16px;}
+    .scale{gap:5px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="meter">
+    <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+    <div class="meter-ticks">
+      <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">TSH Resources</div>
+    <h1>Pre-Training Survey</h1>
+    <p class="sub">Ahead of the one-day online workshop on 23 July 2026, help us calibrate the session to where your team actually stands. Six quick questions, roughly three minutes.</p>
+  </header>
+
+  <form id="surveyForm">
+
+    <div class="card">
+      <div class="section-label"><span class="num">01</span><span class="title">Before we begin</span></div>
+      <div class="q">
+        <label class="field">Name</label>
+        <input type="text" id="respName" placeholder="Your name">
+      </div>
+      <div class="q" style="margin-bottom:0;">
+        <label class="field">Role / job function</label>
+        <input type="text" id="respRole" placeholder="e.g. Estate Manager">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label"><span class="num">02</span><span class="title">AI Readiness</span></div>
+
+      <div class="q" data-qid="q1">
+        <div class="q-text">1. Which AI tools are you currently using?<span class="required-mark">*</span></div>
+        <div class="q-hint">Select all that apply.</div>
+        <div class="options" data-group="q1">
+          <label class="opt"><input type="checkbox" value="ChatGPT"><span>ChatGPT</span></label>
+          <label class="opt"><input type="checkbox" value="Claude"><span>Claude</span></label>
+          <label class="opt"><input type="checkbox" value="Gemini"><span>Gemini</span></label>
+          <label class="opt"><input type="checkbox" value="n8n"><span>n8n</span></label>
+          <label class="opt"><input type="checkbox" value="Not yet"><span>Not yet</span></label>
+          <label class="opt other-opt"><input type="checkbox" value="Other" class="other-trigger"><span>Other</span>
+            <input type="text" class="other-input" placeholder="Please specify">
+          </label>
+        </div>
+        <div class="error-text">Select at least one option.</div>
+      </div>
+
+      <div class="q" data-qid="q2">
+        <div class="q-text">2. How would you rate your current understanding of AI agents and automation?<span class="required-mark">*</span></div>
+        <div class="scale" data-group="q2">
+          <label class="scale-item"><input type="radio" name="q2" value="1"><div class="box">1</div></label>
+          <label class="scale-item"><input type="radio" name="q2" value="2"><div class="box">2</div></label>
+          <label class="scale-item"><input type="radio" name="q2" value="3"><div class="box">3</div></label>
+          <label class="scale-item"><input type="radio" name="q2" value="4"><div class="box">4</div></label>
+          <label class="scale-item"><input type="radio" name="q2" value="5"><div class="box">5</div></label>
+        </div>
+        <div class="scale-caps"><span>1 · Basic understanding</span><span>5 · Well-versed</span></div>
+        <div class="error-text">Please select a rating.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label"><span class="num">03</span><span class="title">Hurdles &amp; Concerns</span></div>
+
+      <div class="q" data-qid="q3">
+        <div class="q-text">3. What concerns you most about adopting AI in your work?<span class="required-mark">*</span></div>
+        <div class="q-hint">Select all that apply.</div>
+        <div class="options" data-group="q3">
+          <label class="opt"><input type="checkbox" value="Not sure how it helps me at work"><span>Not sure how it helps me at work</span></label>
+          <label class="opt"><input type="checkbox" value="Lack of tools and access"><span>Lack of tools and access</span></label>
+          <label class="opt"><input type="checkbox" value="Lack of knowledge and skills"><span>Lack of knowledge and skills</span></label>
+          <label class="opt"><input type="checkbox" value="Unclear ROI"><span>Unclear ROI</span></label>
+          <label class="opt"><input type="checkbox" value="Data security concerns"><span>Data security concerns</span></label>
+          <label class="opt other-opt"><input type="checkbox" value="Other" class="other-trigger"><span>Other</span>
+            <input type="text" class="other-input" placeholder="Please specify">
+          </label>
+        </div>
+        <div class="error-text">Select at least one option.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label"><span class="num">04</span><span class="title">What You Want AI To Do</span></div>
+
+      <div class="q" data-qid="q4">
+        <div class="q-text">4. Which task would you most want AI to help with?<span class="required-mark">*</span></div>
+        <div class="q-hint">Select all that apply.</div>
+        <div class="options" data-group="q4">
+          <label class="opt"><input type="checkbox" value="Handling enquiries and routine follow-ups"><span>Handling enquiries and routine follow-ups, so requests get answered and tracked without manual chasing</span></label>
+          <label class="opt"><input type="checkbox" value="Researching and drafting written work"><span>Researching, summarising, and drafting documents or reports, so you start from a solid draft instead of a blank page</span></label>
+          <label class="opt"><input type="checkbox" value="Analysing data and forecasting"><span>Analysing data, building dashboards, and forecasting trends, so numbers turn into decisions faster</span></label>
+          <label class="opt"><input type="checkbox" value="Automating manual admin work"><span>Automating manual admin work like data entry and reconciliation, so accuracy doesn't depend on repetition</span></label>
+          <label class="opt"><input type="checkbox" value="Creating marketing content and visuals"><span>Creating marketing content and visuals, so campaigns move from idea to output in less time</span></label>
+          <label class="opt other-opt"><input type="checkbox" value="Other" class="other-trigger"><span>Other</span>
+            <input type="text" class="other-input" placeholder="Please specify">
+          </label>
+        </div>
+        <div class="error-text">Select at least one option.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label"><span class="num">05</span><span class="title">In Your Own Words</span></div>
+
+      <div class="q" data-qid="q5">
+        <div class="q-text">5. What's one repetitive task you wish AI could take off your plate?<span class="required-mark">*</span></div>
+        <textarea id="q5" placeholder="Type your answer"></textarea>
+        <div class="error-text">This field is required.</div>
+      </div>
+
+      <div class="q" data-qid="q6">
+        <div class="q-text">6. What do you hope to walk away with from this workshop?<span class="required-mark">*</span></div>
+        <textarea id="q6" placeholder="Type your answer"></textarea>
+        <div class="error-text">This field is required.</div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit">Submit Response</button>
+    <div class="footer-note">
+      Your answers shape how the trainer builds the session.<br>
+      <button type="button" class="admin-link" id="adminOpen">Admin</button>
+    </div>
+  </form>
+
+  <div class="done" id="doneState">
+    <div class="mark">✓</div>
+    <h2>Thanks — you're set.</h2>
+    <p>Your response has been recorded. See you at the workshop.</p>
+  </div>
+
+</div>
+
+<div class="overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <h3>Survey Responses</h3>
+    <div class="count" id="adminCount">0 responses</div>
+    <div class="admin-actions">
+      <button type="button" id="exportCsv">Export CSV</button>
+      <button type="button" id="clearAll">Clear all responses</button>
+      <button type="button" id="closeAdmin">Close</button>
+    </div>
+    <div id="adminTableWrap"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ---- Google Sheets sync ----------------------------------------------
+  // Paste your deployed Apps Script Web App URL below. The server-side
+  // code and one-time setup steps are in google-apps-script.gs (same folder).
+  // Submissions are appended to this spreadsheet (tab gid 1880581065):
+  // https://docs.google.com/spreadsheets/d/13G8FbhECV0YBrNvRYton1eihgBZIZ8IjuGfyd_LvlA0/edit
+  // A backup copy is always kept in this browser's localStorage too.
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk6_VXOD-vCEu3UNVp255wxUMFEe5nUJqAOVYknxot7s969aS0FAoeUjrxifO-fojC/exec";
+
+  var STORE_KEY = "tsh_ai_readiness_responses";
+  var ADMIN_PASS = "tsh2026";
+
+  function getResponses(){
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveResponses(list){
+    localStorage.setItem(STORE_KEY, JSON.stringify(list));
+  }
+
+  // ---- Option / checkbox styling --------------------------------------
+  document.querySelectorAll(".opt").forEach(function(opt){
+    var input = opt.querySelector("input");
+    input.addEventListener("change", function(){
+      if(input.type === "radio"){
+        var group = input.name;
+        document.querySelectorAll('input[name="'+group+'"]').forEach(function(r){
+          r.closest(".opt").classList.toggle("checked", r.checked);
+        });
+      } else {
+        opt.classList.toggle("checked", input.checked);
+      }
+      if(input.classList.contains("other-trigger")){
+        opt.classList.toggle("other-checked", input.checked);
+      }
+      updateMeter();
+    });
+  });
+
+  // ---- Progress meter ---------------------------------------------------
+  var requiredIds = ["q1","q2","q3","q4","q5","q6"];
+
+  function isAnswered(qid){
+    if(qid === "q5" || qid === "q6"){
+      return document.getElementById(qid).value.trim().length > 0;
+    }
+    var group = document.querySelector('[data-group="'+qid+'"]');
+    var inputs = group.querySelectorAll("input");
+    for(var i=0;i<inputs.length;i++){ if(inputs[i].checked) return true; }
+    return false;
+  }
+
+  function updateMeter(){
+    var answered = requiredIds.filter(isAnswered).length;
+    var pct = Math.round((answered / requiredIds.length) * 100);
+    document.getElementById("meterFill").style.width = pct + "%";
+  }
+
+  document.getElementById("q5").addEventListener("input", updateMeter);
+  document.getElementById("q6").addEventListener("input", updateMeter);
+  updateMeter();
+
+  // ---- Collect answers ---------------------------------------------------
+  function collect(qid){
+    if(qid === "q5" || qid === "q6"){
+      return document.getElementById(qid).value.trim();
+    }
+    var group = document.querySelector('[data-group="'+qid+'"]');
+    var vals = [];
+    group.querySelectorAll("input:checked").forEach(function(input){
+      if(input.value === "Other"){
+        var otherText = input.closest(".opt").querySelector(".other-input").value.trim();
+        vals.push(otherText ? ("Other: " + otherText) : "Other");
+      } else {
+        vals.push(input.value);
+      }
+    });
+    var group2 = document.querySelector('[data-group="'+qid+'"]');
+    if(group2.querySelector('input[type="radio"]')){
+      return vals[0] || "";
+    }
+    return vals;
+  }
+
+  function validate(){
+    var ok = true;
+    requiredIds.forEach(function(qid){
+      var answered = isAnswered(qid);
+      var block = document.querySelector('.q[data-qid="'+qid+'"]');
+      var err = block.querySelector(".error-text");
+      if(!answered){
+        ok = false;
+        err.classList.add("show");
+      } else {
+        err.classList.remove("show");
+      }
+    });
+    return ok;
+  }
+
+  document.getElementById("surveyForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    if(!validate()){
+      var firstError = document.querySelector(".error-text.show");
+      if(firstError) firstError.closest(".card").scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+
+    var response = {
+      timestamp: new Date().toISOString(),
+      name: document.getElementById("respName").value.trim(),
+      role: document.getElementById("respRole").value.trim(),
+      q1_tools_used: collect("q1"),
+      q2_understanding_rating: collect("q2"),
+      q3_concerns: collect("q3"),
+      q4_tasks_wanted: collect("q4"),
+      q5_repetitive_task: collect("q5"),
+      q6_workshop_goal: collect("q6")
+    };
+
+    var list = getResponses();
+    list.push(response);
+    saveResponses(list);
+
+    function showDone(synced){
+      document.getElementById("surveyForm").style.display = "none";
+      document.querySelector(".meter").style.display = "none";
+      var done = document.getElementById("doneState");
+      if(!synced){
+        done.querySelector("p").textContent =
+          "Saved on this device, but the Google Sheet could not be reached. " +
+          "The organiser can still recover your answers via the Admin panel on this device.";
+      }
+      done.classList.add("show");
+    }
+
+    if(!SCRIPT_URL){
+      showDone(true);
+      return;
+    }
+
+    var submitBtn = document.querySelector("button.submit");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting…";
+
+    // Content-Type text/plain keeps this a "simple request" (no CORS
+    // preflight); the Apps Script doPost parses the JSON body.
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(response)
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){ showDone(!!(data && data.result === "ok")); })
+    .catch(function(){ showDone(false); });
+  });
+
+  // ---- Admin panel ---------------------------------------------------
+  var overlay = document.getElementById("adminOverlay");
+
+  document.getElementById("adminOpen").addEventListener("click", function(){
+    var pass = prompt("Admin password:");
+    if(pass !== ADMIN_PASS){
+      if(pass !== null) alert("Incorrect password.");
+      return;
+    }
+    renderAdmin();
+    overlay.classList.add("show");
+  });
+  document.getElementById("closeAdmin").addEventListener("click", function(){
+    overlay.classList.remove("show");
+  });
+
+  function renderAdmin(){
+    var list = getResponses();
+    document.getElementById("adminCount").textContent = list.length + " response" + (list.length===1?"":"s") + " stored on this device";
+    var wrap = document.getElementById("adminTableWrap");
+    if(list.length === 0){
+      wrap.innerHTML = '<div class="empty-state">No responses yet.</div>';
+      return;
+    }
+    var cols = ["timestamp","name","role","q1_tools_used","q2_understanding_rating","q3_concerns","q4_tasks_wanted","q5_repetitive_task","q6_workshop_goal"];
+    var html = "<table><thead><tr>";
+    cols.forEach(function(c){ html += "<th>"+c+"</th>"; });
+    html += "</tr></thead><tbody>";
+    list.forEach(function(r){
+      html += "<tr>";
+      cols.forEach(function(c){
+        var v = r[c];
+        if(Array.isArray(v)) v = v.join(", ");
+        html += "<td>" + (v === undefined ? "" : String(v).replace(/</g,"&lt;")) + "</td>";
+      });
+      html += "</tr>";
+    });
+    html += "</tbody></table>";
+    wrap.innerHTML = html;
+  }
+
+  document.getElementById("exportCsv").addEventListener("click", function(){
+    var list = getResponses();
+    if(list.length === 0){ alert("No responses to export."); return; }
+    var cols = ["timestamp","name","role","q1_tools_used","q2_understanding_rating","q3_concerns","q4_tasks_wanted","q5_repetitive_task","q6_workshop_goal"];
+    function csvEscape(v){
+      if(Array.isArray(v)) v = v.join("; ");
+      v = (v === undefined || v === null) ? "" : String(v);
+      if(/[",\n]/.test(v)) v = '"' + v.replace(/"/g,'""') + '"';
+      return v;
+    }
+    var rows = [cols.join(",")];
+    list.forEach(function(r){
+      rows.push(cols.map(function(c){ return csvEscape(r[c]); }).join(","));
+    });
+    var blob = new Blob([rows.join("\n")], {type:"text/csv;charset=utf-8;"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "tsh-ai-readiness-responses-" + new Date().toISOString().slice(0,10) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("clearAll").addEventListener("click", function(){
+    if(confirm("This will permanently delete all responses stored on this device. Continue?")){
+      saveResponses([]);
+      renderAdmin();
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
